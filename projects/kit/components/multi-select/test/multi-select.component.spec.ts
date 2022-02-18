@@ -17,6 +17,7 @@ import {
 import {configureTestSuite, NativeInputPO, PageObject} from '@taiga-ui/testing';
 
 import {TuiMultiSelectModule} from '../multi-select.module';
+import {tuiAssertIsHTMLElement} from '@taiga-ui/cdk';
 
 describe('MultiSelect', () => {
     describe('Basic', () => {

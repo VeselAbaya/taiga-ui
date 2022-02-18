@@ -12,6 +12,7 @@ import {configureTestSuite} from '@taiga-ui/testing';
 
 import {TuiRootModule} from '../../../components/root/root.module';
 import {TuiHintModule} from '../hint.module';
+import {tuiAssertIsHTMLElement} from '@taiga-ui/cdk';
 
 type Hint = string | TemplateRef<{}> | undefined | null;
 
