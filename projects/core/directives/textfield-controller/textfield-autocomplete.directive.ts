@@ -17,7 +17,7 @@ export const TUI_TEXTFIELD_AUTOCOMPLETE =
 })
 export class TuiTextfieldAutocompleteDirective extends TuiController {
     @Input('tuiTextfieldAutocomplete')
-    autocomplete: TuiAutofillFieldName | '' = '';
+    autocomplete: TuiAutofillFieldName | '' | null = '';
 }
 
 export function autocompleteDirectiveFactory(): TuiTextfieldAutocompleteDirective {

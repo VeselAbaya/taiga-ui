@@ -35,7 +35,7 @@ export class TuiWrapperDirective {
 
     @Input()
     @HostBinding('attr.data-appearance')
-    appearance = '';
+    appearance: string | null = '';
 
     constructor(@Inject(TUI_MODE) readonly mode$: Observable<TuiBrightness | null>) {}
 

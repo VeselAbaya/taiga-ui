@@ -23,7 +23,7 @@ import {distinctUntilChanged, map, skip, startWith} from 'rxjs/operators';
 export class TuiActiveZoneDirective implements OnDestroy {
     private subActiveZones: readonly TuiActiveZoneDirective[] = [];
 
-    private tuiActiveZoneParent: TuiActiveZoneDirective | null = null;
+    private tuiActiveZoneParent?: TuiActiveZoneDirective | null = null;
 
     @Input('tuiActiveZoneParent')
     @tuiDefaultProp()
@@ -76,7 +76,7 @@ export class TuiActiveZoneDirective implements OnDestroy {
     }
 
     @tuiPure
-    private setZone(zone: TuiActiveZoneDirective | null) {
+    private setZone(zone: TuiActiveZoneDirective | null | undefined) {
         if (this.tuiActiveZoneParent) {
             this.tuiActiveZoneParent.removeSubActiveZone(this);
         }

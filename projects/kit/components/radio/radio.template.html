@@ -16,7 +16,7 @@
         type="radio"
         class="native"
         [id]="id"
-        [attr.name]="computedName"
+        [attr.name]="computedName || ''"
         [disabled]="computedDisabled"
         [tuiChecked]="checked"
         [tuiFocusable]="isFocusable"

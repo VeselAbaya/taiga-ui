@@ -18,6 +18,7 @@ import {
     itemsQueryListObservable,
     moveFocus,
     setNativeMouseFocused,
+    tuiAssertIsHTMLElement,
     tuiDefaultProp,
     tuiPure,
 } from '@taiga-ui/cdk';
@@ -106,11 +107,13 @@ export class TuiDataListComponent<T> implements TuiDataListAccessor<T> {
             .filter(isPresent);
     }
 
-    onFocus(element: HTMLElement, top: boolean) {
+    onFocus(event: Event, top: boolean) {
+        tuiAssertIsHTMLElement(event.target);
+
         const {elements} = this;
 
         moveFocus(top ? -1 : elements.length, elements, top ? 1 : -1);
-        this.handleFocusLossIfNecessary(element);
+        this.handleFocusLossIfNecessary(event.target);
     }
 
     private get elements(): readonly HTMLElement[] {

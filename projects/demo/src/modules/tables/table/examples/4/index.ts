@@ -87,7 +87,7 @@ export class TuiTableExample4 {
 
     readonly direction$ = new BehaviorSubject<-1 | 1>(1);
 
-    readonly sorter$ = new BehaviorSubject<TuiComparator<User>>(this.sorters.name);
+    readonly sorter$ = new BehaviorSubject<TuiComparator<User> | null>(this.sorters.name);
 
     readonly minAge = new FormControl(21);
 
@@ -104,7 +104,7 @@ export class TuiTableExample4 {
         share(),
     );
 
-    initial = ['Name', 'Date of Birth', 'Age'];
+    initial: readonly string[] = ['Name', 'Date of Birth', 'Age'];
 
     enabled = this.initial;
 
@@ -122,13 +122,13 @@ export class TuiTableExample4 {
         startWith(1),
     );
 
-    readonly data$ = this.request$.pipe(
+    readonly data$: Observable<readonly User[]> = this.request$.pipe(
         filter(isPresent),
         map(users => users.filter(isPresent)),
         startWith([]),
     );
 
-    onEnabled(enabled: string[]) {
+    onEnabled(enabled: readonly string[]) {
         this.enabled = enabled;
         this.columns = this.initial
             .filter(column => enabled.includes(column))
@@ -151,8 +151,8 @@ export class TuiTableExample4 {
         return !!this.search && TUI_DEFAULT_MATCHER(value, this.search);
     }
 
-    getAge(user: User): number {
-        return getAge(user);
+    getAge(user: User | unknown): number {
+        return getAge(user as User);
     }
 
     private getData(
@@ -177,7 +177,7 @@ export class TuiTableExample4 {
 }
 
 function getKey(
-    sorter: TuiComparator<User>,
+    sorter: TuiComparator<User> | null,
     dictionary: Record<Key, TuiComparator<User>>,
 ): Key {
     const pair = Object.entries(dictionary).find<[Key, TuiComparator<User>]>(

@@ -126,14 +126,14 @@
                     class="t-tooltip"
                     [direction]="hintController.direction"
                     [mode]="hintController.mode"
-                    [content]="hintController.content"
+                    [content]="hintController.content || ''"
                     [showDelay]="hintController.showDelay"
                     [hideDelay]="hintController.hideDelay"
                 ></tui-tooltip>
                 <tui-svg
                     *ngIf="iconAlignRight"
                     class="t-icon"
-                    [src]="icon"
+                    [src]="icon || ''"
                 ></tui-svg>
             </div>
         </div>

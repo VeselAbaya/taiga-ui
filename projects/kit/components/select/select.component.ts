@@ -119,10 +119,7 @@ export class TuiSelectComponent<T>
     }
 
     @tuiPure
-    computeContext(
-        $implicit: T | null,
-        active: boolean,
-    ): TuiValueContentContext<T | null> {
+    computeContext($implicit: T, active: boolean): TuiValueContentContext<T> {
         return {$implicit, active};
     }
 
