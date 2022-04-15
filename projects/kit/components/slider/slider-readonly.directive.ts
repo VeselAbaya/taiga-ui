@@ -1,16 +1,18 @@
-import {Directive, HostListener, Input} from '@angular/core';
-import {tuiDefaultProp} from '@taiga-ui/cdk';
+import {
+    ChangeDetectorRef,
+    Directive,
+    HostListener,
+    Inject,
+    Input,
+    Optional,
+    Self,
+} from '@angular/core';
+import {NgControl} from '@angular/forms';
+import {tuiDefaultProp, TuiDestroyService, watch} from '@taiga-ui/cdk';
+import {Observable} from 'rxjs';
+import {takeUntil} from 'rxjs/operators';
 
-const SLIDER_INTERACTION_KEYS = new Set([
-    'ArrowLeft',
-    'ArrowRight',
-    'ArrowUp',
-    'ArrowDown',
-    'Home',
-    'End',
-    'PageUp',
-    'PageDown',
-]);
+import {TuiSliderComponent} from './slider.component';
 
 /**
  * Native <input type='range' readonly> doesn't work.
@@ -18,24 +20,39 @@ const SLIDER_INTERACTION_KEYS = new Set([
  */
 @Directive({
     selector: 'input[tuiSlider][readonly]',
+    providers: [TuiDestroyService],
 })
 export class TuiSliderReadonlyDirective {
+    private lastValue = this.slider.value;
+
     @Input()
     @tuiDefaultProp()
     readonly: '' | boolean = true;
 
-    @HostListener('mousedown', ['$event'])
-    @HostListener('touchstart', ['$event'])
-    preventEvent(event: Event) {
-        if (this.readonly === '' || this.readonly) {
-            event.preventDefault();
-        }
+    get computedReadonly(): boolean {
+        return this.readonly === '' || this.readonly;
     }
 
-    @HostListener('keydown', ['$event'])
-    preventKeyboardInteraction(event: KeyboardEvent) {
-        if (SLIDER_INTERACTION_KEYS.has(event.key)) {
-            this.preventEvent(event);
+    constructor(
+        @Optional()
+        @Self()
+        @Inject(NgControl)
+        readonly ngControl: NgControl | null,
+        @Inject(ChangeDetectorRef) changeDetectorRef: ChangeDetectorRef,
+        @Inject(TuiDestroyService) destroy$: Observable<unknown>,
+        @Inject(TuiSliderComponent) private readonly slider: TuiSliderComponent,
+    ) {
+        ngControl?.valueChanges
+            ?.pipe(watch(changeDetectorRef), takeUntil(destroy$))
+            .subscribe(() => {
+                this.lastValue = this.slider.value;
+            });
+    }
+
+    @HostListener('input')
+    onInput() {
+        if (this.computedReadonly) {
+            this.slider.value = this.lastValue;
         }
     }
 }
