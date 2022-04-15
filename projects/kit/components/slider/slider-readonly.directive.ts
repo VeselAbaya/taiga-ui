@@ -8,7 +8,12 @@ import {
     Self,
 } from '@angular/core';
 import {NgControl} from '@angular/forms';
-import {tuiDefaultProp, TuiDestroyService, watch} from '@taiga-ui/cdk';
+import {
+    tuiCoerceBooleanProperty,
+    tuiDefaultProp,
+    TuiDestroyService,
+    watch,
+} from '@taiga-ui/cdk';
 import {Observable} from 'rxjs';
 import {takeUntil} from 'rxjs/operators';
 
@@ -29,10 +34,6 @@ export class TuiSliderReadonlyDirective {
     @tuiDefaultProp()
     readonly: '' | boolean = true;
 
-    get computedReadonly(): boolean {
-        return this.readonly === '' || this.readonly;
-    }
-
     constructor(
         @Optional()
         @Self()
@@ -51,7 +52,7 @@ export class TuiSliderReadonlyDirective {
 
     @HostListener('input')
     onInput() {
-        if (this.computedReadonly) {
+        if (tuiCoerceBooleanProperty(this.readonly)) {
             this.slider.value = this.lastValue;
         }
     }
