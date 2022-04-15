@@ -44,5 +44,12 @@ export class TuiRootComponent {
     ) {
         tuiAssert.enabled = enabled;
         body.setAttribute('data-tui-theme', theme.toLowerCase());
+        this.unsetOverflowAutoForDesktop(body);
+    }
+
+    private unsetOverflowAutoForDesktop(body: HTMLElement) {
+        if (!this.isMobile && getComputedStyle(body).overflow === 'auto') {
+            body.style.overflow = 'unset';
+        }
     }
 }

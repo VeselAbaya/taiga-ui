@@ -16,12 +16,14 @@ import {
     TuiNativeFocusableElement,
 } from '@taiga-ui/cdk/interfaces';
 import {TUI_FOCUSABLE_ITEM_ACCESSOR, TUI_IS_IOS} from '@taiga-ui/cdk/tokens';
+import {px} from '@taiga-ui/cdk/utils';
 import {setNativeFocused} from '@taiga-ui/cdk/utils/focus';
 import {Observable, race, timer} from 'rxjs';
 import {map, skipWhile, take, throttleTime} from 'rxjs/operators';
 
 const TIMEOUT = 1000;
 const NG_ANIMATION_SELECTOR = '.ng-animating';
+const VIRTUAL_KEYBOARD_HEIGHT = 270;
 
 // TODO: in 3.0 change input name to tuiAutoFocus and handle empty string
 // TODO: refactor on this whole thing in 3.0
@@ -84,12 +86,33 @@ export class TuiAutoFocusDirective implements AfterViewInit {
         return this.element.matches('input, textarea');
     }
 
+    private isFullScreenDialog() {
+        return (
+            this.element.closest('[data-size="page"]') != null ||
+            this.element.closest('[data-size="fullscreen"]') != null
+        );
+    }
+
     private iosWebkitAutofocus() {
+        const animationMinDelay = 100;
         const fakeInput: HTMLElement = this.renderer.createElement('input');
 
         fakeInput.style.position = 'absolute';
         fakeInput.style.opacity = '0';
-        fakeInput.style.height = '0';
+
+        /**
+         * @note: emulate original container size
+         */
+        fakeInput.style.height = px(this.element.clientHeight);
+        fakeInput.style.width = px(this.element.clientWidth);
+
+        /**
+         * @note:
+         * Move the focus point where the focus will browser navigate when the virtual keyboard opened
+         */
+        const offsetY = this.isFullScreenDialog() ? 0 : VIRTUAL_KEYBOARD_HEIGHT;
+
+        fakeInput.style.marginTop = `${px(-1 * (this.element.clientHeight + offsetY))}`;
 
         const blurHandler = () => setNativeFocused(fakeInput);
         const focusHandler = () => {
@@ -104,8 +127,8 @@ export class TuiAutoFocusDirective implements AfterViewInit {
                     fakeInput.removeEventListener('blur', blurHandler);
                     fakeInput.removeEventListener('focus', focusHandler);
                     fakeInput.remove();
-                });
-            });
+                }, animationMinDelay);
+            }, animationMinDelay);
         };
 
         /**
